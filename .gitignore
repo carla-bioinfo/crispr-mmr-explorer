@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data (arquivos grandes)
+data/raw/*
+data/processed/*
+!data/raw/README.md
+!data/processed/README.md
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Reports
+reports/*
+!reports/README.md
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
