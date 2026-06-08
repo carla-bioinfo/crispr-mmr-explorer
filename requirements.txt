@@ -1,35 +1,35 @@
 # Core Dependencies
-pandas==2.0.3
-numpy==1.24.4
-biopython==1.81
-pyvcf==0.6.8
-requests==2.31.0
-sqlalchemy==2.0.21
-pydantic==2.3.0
+pandas
+numpy
+biopython
+pyvcf3
+requests
+sqlalchemy
+pydantic
 
 # Visualization
-plotly==5.15.0
-matplotlib==3.7.2
-seaborn==0.12.2
+plotly
+matplotlib
+seaborn
 
 # Dashboard
-streamlit==1.28.1
-streamlit-aggrid==0.3.5
+streamlit
+streamlit-aggrid
 
 # Reports
-reportlab==4.0.7
-jinja2==3.1.2
+reportlab
+jinja2
 
 # Testing
-pytest==7.4.2
-pytest-cov==4.1.0
+pytest
+pytest-cov
 
 # Code Quality
-black==23.10.0
-flake8==6.1.0
-mypy==1.5.1
+black
+flake8
+mypy
 
 # Development
-jupyter==1.0.0
-ipython==8.15.0
-python-dotenv==1.0.0
+jupyter
+ipython
+python-dotenv
