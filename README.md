@@ -24,11 +24,11 @@ Este projeto combina:
 - **Validação Rigorosa**: 0% de diferença entre dados originais e processados
 - **Testes Abrangentes**: Meta de cobertura ≥ 80%
 - **Dashboard Interativo**: Visualizações em tempo real com Streamlit
-- - **Relatórios Científicos**: Exportação em PDF com qualidade de publicação
+- **Relatórios Científicos**: Exportação em PDF com qualidade de publicação
 
 ---
 
-## 🏗️ Arquitetura do Projetocrispr-mmr-explorer/
+## 🏗️ Arquitetura do Projeto
 │
 ├── data/
 │   ├── raw/                    # Dados originais (ClinVar, InSiGHT)
@@ -48,6 +48,7 @@ Este projeto combina:
 ├── notebooks/                  # Exploração de dados (Jupyter)
 ├── tests/                      # Testes automatizados (pytest)
 ├── docs/                       # Documentação científica e técnica
+├── Dockerfile                  # Imagem para execução em container
 └── requirements.txt            # Dependências Python---
 
 ## 🧬 Stack Tecnológico
@@ -79,11 +80,14 @@ Este projeto combina:
 ## ⚡ Quick Start
 
 ### Pré-requisitos
-- Python 3.9+
+- Python 3.14
 - Git
 - pip
+- Docker
 
 ### Instalação
+
+#### Opção 1: Execução local
 
 ```bash
 # 1. Clonar o repositório
@@ -97,9 +101,21 @@ source venv/bin/activate
 # 3. Instalar dependências
 pip install -r requirements.txt
 
-# 4. Executar o dashboard (quando pronto)
-streamlit run app.py
+# 4. Executar o dashboard
+python -m src
 ```
+
+#### Opção 2: Via Docker
+
+```bash
+# 1. Build da imagem
+docker build -t crispr-mmr-explorer .
+
+# 2. Executar o container
+docker run --rm -p 8501:8501 crispr-mmr-explorer
+```
+
+Depois, acesse o Streamlit em http://localhost:8501.
 
 ---
 
