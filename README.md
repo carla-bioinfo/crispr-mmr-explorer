@@ -13,11 +13,11 @@ Uma **plataforma bioinformática completa** para análise, exploração e educa�
 - ✅ Fundamentos teóricos (50+ páginas)
 - ✅ Coleta de dados (10 variantes)
 
-**Refatoração v0.4.0 (Em Progresso)**
+**Refatoração v0.5.0 (Em Andamento)**
 - ✅ **Etapa 0.1**: ACMG Classifier v0.4.0 com ACMG/AMP 2015 correto
 - ✅ **Etapa 0.2**: Pydantic Validation + Limpeza de código
-- ⏳ **Etapa 0.3**: Logging + Exception Handling (próxima)
-- ⏳ **Etapa 0.4**: Dataset expandido com allele_frequency
+- ✅ **Etapa 0.3**: Logging + Exception Handling (v0.5.0) ← NOVA!
+- ⏳ **Etapa 0.4**: Testes + QA (próxima)
 
 **Fases Legacy (v0.3.0)**
 - ✅ Fase 3A: SQLite Database
@@ -28,9 +28,8 @@ Uma **plataforma bioinformática completa** para análise, exploração e educa�
 ## 🎯 O que é este Projeto?
 
 CRISPR-MMR Explorer demonstra:
-
 - 🧬 **Bioinformática Translacional**: Síndrome de Lynch, genes MMR, ACMG/AMP 2015
-- 💻 **Engenharia de Software**: Arquitetura modular, validação, testes
+- 💻 **Engenharia de Software**: Arquitetura modular, validação, testes, logging
 - 📊 **Ciência de Dados**: SQLite, pandas, plotly
 - 🎨 **Interface Web**: Streamlit interativo
 - 🔬 **Rigor Científico**: Validação Pydantic, reproduzibilidade, Git
@@ -49,13 +48,21 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Executar Análise ACMG v0.4.0
+### Executar Análise ACMG v0.5.0 (com Logging)
 
 ```bash
 python3 src/variants/acmg_analyzer.py
 ```
 
-Resultado salvo em: `data/processed/clinvar_mmr_with_acmg_v0.4.0.csv`
+Resultado salvo em: `data/processed/clinvar_mmr_with_acmg_v0.5.0.csv`
+
+Logs em: `logs/crispr_mmr_YYYYMMDD.log`
+
+### Ver Logs em Tempo Real
+
+```bash
+tail -f logs/crispr_mmr_*.log
+```
 
 ### Executar Dashboard
 
@@ -67,158 +74,56 @@ Acesse: http://localhost:8501
 
 ---
 
-## 🔬 ACMG Classifier v0.4.0
+## 🔬 ACMG Classifier v0.5.0
 
-### Implementação ACMG/AMP 2015
+### O que é Novo (Etapa 0.3)
 
-Diferente de v0.3.0, v0.4.0 implementa a **lógica ACMG/AMP 2015 correta**:
+**Logging Profissional:**
+- Rastreamento completo de todas as operações
+- Arquivo de log permanente: `logs/crispr_mmr_YYYYMMDD.log`
+- Diferentes níveis: DEBUG, INFO, WARNING, ERROR
+- Formato estruturado com data/hora, função, linha
 
-**Critérios Implementados:**
-- **PVS1** (Muito Forte): Null variant em genes MMR (frameshift, stop_gained, splice_site)
-- **PS1** (Forte): Mesma mudança já reportada como Pathogenic
-- **PM2** (Moderado): Frequência alélica muito baixa (< 0.001%)
-- **BA1** (Muito Forte Benign): Frequência alélica alta (> 5%)
+**Exception Handling Robusto:**
+- Custom exceptions específicas do projeto
+- Tratamento estruturado com try/except/finally
+- Fácil identificação e debugging de erros
 
-**Regras de Decisão:**
-1. 1+ PVS1 → **Pathogenic (P)**
-2. 1+ PS1 → **Likely Pathogenic (LP)**
-3. PM2 → **Likely Pathogenic (LP)**
-4. 1+ BA1 → **Benign (B)**
-5. Nenhum critério → **VUS (Variant of Uncertain Significance)**
-
-### Comparação v0.3.0 vs v0.4.0
-
-| Aspecto | v0.3.0 | v0.4.0 |
-|---------|--------|--------|
-| Lógica | Pontos (simplificado) | Regras ACMG (correto) |
-| Científico | ❌ Não | ✅ ACMG 2015 |
-| Validação | Nenhuma | ✅ Pydantic |
-| Substitution | Pathogenic | ✅ VUS (correto) |
-
-### Resultados (10 variantes)
-
-**v0.3.0 (Simplificado):**
-Pathogenic (P/LP): 9
-
-Benign (B): 1
-
-VUS: 0
-**v0.4.0 (ACMG 2015 Correto):**
-🔴 Pathogenic (P): 5
-
-🟠 Likely Pathogenic (LP): 2
-
-🟡 VUS: 3 ← Identifica corretamente variantes incertas!
-
-🟢 Benign (B): 0
----
-
-## 📦 Pydantic Validation
-
-Cada variante é validada com **modelos Pydantic**:
-
-```python
-from src.variants.models import VariantInput
-
-# Valida automaticamente:
-# - clinvar_id: Começa com RCV ou VCV
-# - gene: Um dos 5 genes MMR (MLH1, MSH2, MSH6, PMS2, EPCAM)
-# - hgvs: Notação HGVS válida
-# - tipo: Um dos tipos válidos (deletion, insertion, etc)
-# - allele_frequency: Entre 0 e 1 (opcional)
-
-variant = VariantInput(
-    clinvar_id='VCV000000001',
-    gene='MLH1',
-    hgvs='MLH1:c.678_679delGT',
-    classificacao='Pathogenic',
-    tipo='deletion',
-    allele_frequency=0.00001
-)
-```
+**Estrutura de Pacotes:**
+- Novo pacote `src/utils/` com utilidades reutilizáveis
+- Importações limpas e organizadas
+- Fácil manutenção e expansão
 
 ---
 
-## 📊 Fase 3A: SQLite Database
-
-### Dados
-
-- 10 variantes importadas de ClinVar
-- Validação: 100% (0% diferença)
-- Banco: `data/processed/variants.db`
-
-### Scripts
-
-- `database.py`: Classe VariantDatabase
-- `import_from_csv.py`: Importador de dados
-- `validate_import.py`: Validação de integridade
-- `query_variants.py`: Consultas SQL
-
----
-
-## 🎨 Fase 3B: Streamlit Dashboard
-
-### Seções
-
-1. **Home**: Estatísticas + Gráfico ACMG
-2. **Variantes**: Tabela com filtros (Gene, ACMG, Tipo)
-3. **Análises**: Gráficos de distribuição e box plot
-4. **Por Gene**: Análise individual (MLH1, MSH2, MSH6, PMS2)
-5. **Sobre**: Informações do projeto
-
-### Features
-
-- ✅ Tabelas interativas
-- ✅ Gráficos Plotly
-- ✅ Filtros dinâmicos
-- ✅ Download CSV
-
----
-
-## 📈 Dataset
-
-**Total**: 10 variantes
-
-**Por Gene**:
-- MLH1: 3
-- MSH2: 3
-- MSH6: 2
-- PMS2: 2
-
-**Classificação ACMG v0.4.0**:
-- Pathogenic (P): 5 (50%)
-- Likely Pathogenic (LP): 2 (20%)
-- VUS: 3 (30%)
-- Benign (B): 0 (0%)
-
----
-
-## 📁 Estrutura do Projeto
+## 📁 Estrutura do Projeto (v0.5.0)
 crispr-mmr-explorer/
 
 ├── src/
 
 │   ├── variants/
 
-│   │   ├── acmg_analyzer.py ✅ (v0.4.0 com Pydantic)
+│   │   ├── acmg_analyzer.py (v0.5.0) ← Com logging + exceptions
 
-│   │   ├── acmg_analyzer_v0.3.0_backup.py
-
-│   │   ├── models.py ✅ (Validação Pydantic)
+│   │   ├── models.py (Pydantic validation)
 
 │   │   ├── database.py
 
-│   │   ├── query_variants.py
-
-│   │   ├── validate_import.py
-
-│   │   ├── import_from_csv.py
-
 │   │   └── init.py
 
-│   └── utils/
+│   │
 
-│       └── (próximas etapas)
+│   └── utils/ ← NOVO
+
+│       ├── logger.py (Sistema de logging)
+
+│       ├── exceptions.py (Custom exceptions)
+
+│       ├── init.py (Imports facilitados)
+
+│       └── pycache/
+
+│
 
 ├── data/
 
@@ -228,98 +133,181 @@ crispr-mmr-explorer/
 
 │   └── processed/
 
-│       ├── variants.db
+│       └── clinvar_mmr_with_acmg_v0.5.0.csv
 
-│       └── clinvar_mmr_with_acmg_v0.4.0.csv ✅
+│
 
-├── tests/
+├── logs/ ← NOVO
 
-│   └── (próximas etapas)
+│   └── crispr_mmr_*.log (Arquivo de log diário)
 
-├── docs/
+│
 
-│   └── (referências)
-
-├── app.py (Streamlit)
+├── app.py (Streamlit Dashboard)
 
 ├── requirements.txt
 
-├── .git/ (2 commits v0.4.0)
+├── README.md
 
-└── README.md
+├── RESUMO_SESSAO_0.3_COMPLETO.md ← Nova documentação
+
+└── .git/
 ---
 
-## 🛠️ Stack Tecnológico
+## 🔬 ACMG Classifier v0.4.0 (Lógica Base)
 
-- **Python**: 3.9.2
-- **Bioinformática**: Pydantic, BioPython
-- **Database**: SQLite
-- **Web**: Streamlit 1.28.1
-- **Data**: pandas 2.0.3, plotly 5.15.0
-- **Version Control**: Git 2.30.2
-- **Testing**: pytest 7.4.0
+### Implementação ACMG/AMP 2015
+
+Diferente de v0.3.0, v0.4.0+ implementa a **lógica ACMG/AMP 2015 correta**:
+
+**Critérios Implementados:**
+- **PVS1** (Muito Forte): Null variant em genes MMR (frameshift, stop_gained, splice_site)
+- **PS1** (Forte): Mesma mudança já reportada como Pathogenic
+- **PM2** (Moderado): Frequência alélica muito baixa (< 0.001%)
+- **BA1** (Muito Forte Benign): Frequência alélica alta (> 5%)
+
+**Regras de Decisão:**
+1. 1+ PVS1 + 1+ PS1 → **Pathogenic (P)**
+2. 1+ PVS1 ou (PS1 + PM2) → **Likely Pathogenic (LP)**
+3. PM2 → **VUS (Variant of Uncertain Significance)**
+4. 1+ BA1 → **Benign (B)**
+5. Nenhum critério → **VUS**
+
+### Comparação v0.3.0 vs v0.4.0+
+
+| Aspecto | v0.3.0 | v0.4.0+ |
+|---------|--------|---------|
+| Lógica | Pontos (simplificado) | Regras ACMG (correto) |
+| Científico | ❌ Não | ✅ ACMG 2015 |
+| Validação | Nenhuma | ✅ Pydantic |
+| Logging | ❌ Não | ✅ v0.5.0 |
+| Exceptions | Nenhuma | ✅ v0.5.0 |
+| Substitution | Pathogenic | ✅ VUS (correto) |
+
+### Resultados (10 variantes teste)
+
+**v0.4.0 (ACMG correto):**
+Pathogenic: 5
+
+Likely Pathogenic: 0
+
+VUS: 5
+
+Benign: 0
+**v0.5.0 (Com logging + rastreamento):**
+Pathogenic: 5
+
+Likely Pathogenic: 0
+
+VUS: 5
+
+Benign: 0
+Logs registrados: logs/crispr_mmr_20260614.log (2.5K)
+
+Rastreamento completo: ✅ Sim
+---
+
+## 💾 Componentes Principais
+
+### src/utils/logger.py (v0.5.0)
+
+Sistema centralizado de logging:
+
+```python
+from src.utils import get_logger
+
+logger = get_logger(__name__)
+logger.info("Operação iniciada")
+logger.error("Algo falhou")
+```
+
+Saída:
+2026-06-14 18:06:44 | INFO     | CRISPR_MMR | <module>:10 | Operação iniciada
+
+2026-06-14 18:06:44 | ERROR    | CRISPR_MMR | <module>:11 | Algo falhou
+### src/utils/exceptions.py (v0.5.0)
+
+Custom exceptions do projeto:
+
+```python
+from src.utils import VariantValidationError, ACMGClassificationError
+
+try:
+    # validação
+except VariantValidationError as e:
+    logger.error(f"Validação falhou: {e}")
+except ACMGClassificationError as e:
+    logger.error(f"Classificação falhou: {e}")
+```
 
 ---
 
-## 📚 Próximas Etapas (v0.4.0)
+## 🧪 Genes MMR Suportados
 
-### Etapa 0.3 (Próxima)
-- Implementar logging system (`src/utils/logger.py`)
-- Criar custom exceptions (`src/utils/exceptions.py`)
-- Integrar ao ACMG Classifier
-- **Tempo**: ~1 hora
-
-### Etapa 0.4
-- Expandir dataset para 30+ variantes
-- Adicionar `allele_frequency` ao CSV
-- Adicionar campos `msi_status` e `cancer_type`
-- **Tempo**: ~1 hora
-
-### Fases 1-2
-- Testes unitários (pytest)
-- Documentação (Architecture, Installation, Dataset)
-- Segurança (SQL injection review, .gitignore)
-- **Tempo**: ~3-4 horas
-
-### Fases 3+
-- APIs reais (Ensembl, VEP)
-- CI/CD (GitHub Actions)
-- Jupyter notebooks
-- Publicação científica
+- ✅ MLH1 (Mutl Homolog 1)
+- ✅ MSH2 (MutS Homolog 2)
+- ✅ MSH6 (MutS Homolog 6)
+- ✅ PMS2 (PMS1 Homolog 2)
+- ✅ EPCAM (Epithelial Cell Adhesion Molecule)
 
 ---
 
-## 📖 Referências
+## 📚 Referências
 
-**ACMG/AMP 2015**
-- Richards et al. Genetics in Medicine 17(5):405-424
-- https://www.acmg.net/
+### ACMG/AMP 2015
+- Richards et al. Genetics in Medicine. 2015
+- https://www.ncbi.nlm.nih.gov/pubmed/25741868
 
-**Síndrome de Lynch**
-- InSiGHT Database: https://www.insightgroup.org/
+### Síndrome de Lynch & Genes MMR
+- InSiGHT Database: https://www.insight-group.org/
 - ClinVar: https://www.ncbi.nlm.nih.gov/clinvar/
 
-**Notação HGVS**
-- https://varnomen.hgvs.org/
-
-**Ferramentas**
+### Documentação Técnica
 - Pydantic: https://docs.pydantic.dev/
-- Streamlit: https://docs.streamlit.io/
-
----
-
-## 📝 Licença
-
-MIT License
+- Python Logging: https://docs.python.org/3/library/logging.html
 
 ---
 
 ## 👤 Autor
 
-**Carla Rodrigues** - Bioinformática Clínica  
-GitHub: [@carla-bioinfo](https://github.com/carla-bioinfo)
+**Carla Rodrigues** | Bioinformática Clínica Translacional
+
+- 🔗 GitHub: https://github.com/carla-bioinfo
+- 💼 LinkedIn: https://www.linkedin.com/in/carla-bioinfo/
+- 📧 Email: carlabio.biomol@gmail.com
 
 ---
 
-**v0.4.0** - Junho 2026  
-*Making bioinformatics accessible, reproducible, and scientifically rigorous.*
+## 📄 Licença
+
+MIT License - Veja LICENSE para detalhes
+
+---
+
+## 🚀 Próximas Etapas
+
+**Etapa 0.4 (Próxima):**
+- Unit Tests com pytest
+- Integration Tests
+- Edge Cases
+- Code Coverage (80%+)
+
+**Etapa 0.5+:**
+- Dataset expandido (50+ variantes)
+- Adicionar allele_frequency
+- Integração com bases de dados online
+- API REST
+
+---
+
+## 📞 Contato & Suporte
+
+Dúvidas? Sugestões? Issues?
+
+👉 Abra uma issue no GitHub: https://github.com/carla-bioinfo/crispr-mmr-explorer/issues
+
+---
+
+**Última atualização:** 14 de Junho de 2026 (Etapa 0.3)  
+**Versão atual:** v0.5.0  
+**Status:** Em desenvolvimento ✅
