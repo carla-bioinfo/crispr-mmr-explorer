@@ -1,226 +1,126 @@
 # 🧬 CRISPR-MMR Explorer
-## Uma Plataforma Bioinformática para Análise de Genes Mismatch Repair e Síndrome de Lynch
 
-![Status](https://img.shields.io/badge/Status-Development-yellow)
-![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Maintenance](https://img.shields.io/badge/Maintenance-Active-brightgreen)
+Uma **plataforma bioinformática completa** para análise, exploração e educação sobre variantes no sistema Mismatch Repair (MMR) e Síndrome de Lynch (HNPCC).
 
 ---
 
-## 📋 Sobre o Projeto
+## 📋 Status do Projeto
 
-**CRISPR-MMR Explorer** é uma plataforma bioinformática completa para análise, exploração e educação sobre genes do sistema **Mismatch Repair (MMR)** e a **Síndrome de Lynch**. 
-
-Este projeto combina:
-- ✅ **Rigor de Engenharia de Software** (testes, CI/CD, versionamento)
-- ✅ **Precisão Biológica** (referências científicas, validação rigorosa)
-- ✅ **Reprodutibilidade Científica** (dados públicos, metodologia clara)
-
-### 🎯 Diferencial
-
-- **Nicho de Alto Valor**: Foco em MMR, MSI e Síndrome de Lynch — essenciais em imunoterapia e oncogenética
-- **Arquitetura de Produção**: Estrutura profissional com separação clara de responsabilidades
-- **Validação Rigorosa**: 0% de diferença entre dados originais e processados
-- **Testes Abrangentes**: Meta de cobertura ≥ 80%
-- **Dashboard Interativo**: Visualizações em tempo real com Streamlit
-- - **Relatórios Científicos**: Exportação em PDF com qualidade de publicação
+✅ Módulo 1: Setup - COMPLETO
+✅ Módulo 2: Fundamentos Teóricos - COMPLETO (50+ páginas)
+✅ Módulo B: Coleta de Dados + ACMG - COMPLETO (10 variantes)
+✅ Fase 3A: SQLite Database - COMPLETO
+✅ Fase 3B: Streamlit Dashboard - COMPLETO
 
 ---
 
-## 🏗️ Arquitetura do Projetocrispr-mmr-explorer/
-│
-├── data/
-│   ├── raw/                    # Dados originais (ClinVar, InSiGHT)
-│   ├── processed/              # Dados transformados
-│   └── validation/             # Relatórios de validação
-│
-├── src/                        # Código principal modular
-│   ├── ingestion/              # Parsers (ClinVar, InSiGHT, Ensembl)
-│   ├── preprocessing/          # Normalização, validação
-│   ├── variants/               # Banco de dados, classificação ACMG
-│   ├── genomics/               # Sequências, análise CRISPR
-│   ├── visualization/          # Plotly, gráficos interativos
-│   ├── reports/                # Geração de PDFs científicos
-│   ├── dashboard/              # Streamlit
-│   └── utils/                  # Logging, configuração
-│
-├── notebooks/                  # Exploração de dados (Jupyter)
-├── tests/                      # Testes automatizados (pytest)
-├── docs/                       # Documentação científica e técnica
-└── requirements.txt            # Dependências Python---
+## 🎯 O que é este Projeto?
 
-## 🧬 Stack Tecnológico
+CRISPR-MMR Explorer demonstra:
 
-### Backend & Processamento
-- **pandas** — Manipulação de dados tabulares
-- **numpy** — Computação numérica de alto desempenho
-- **biopython** — Bioinformática (sequências, parsing)
-- **sqlalchemy** — ORM para banco de dados
-
-### Análise Genômica
-- **pyvcf** — Parsing de arquivos VCF
-- **requests** — Integração com APIs
-
-### Visualização & Relatórios
-- **streamlit** — Dashboard web interativo
-- **plotly** — Gráficos interativos
-- **matplotlib, seaborn** — Visualizações estatísticas
-- **reportlab** — Geração de PDFs
-
-### Testes & Qualidade
-- **pytest** — Framework de testes
-- **black** — Formatação de código
-- **flake8** — Linting
-- **mypy** — Type checking
+- 🧬 **Bioinformática Translacional**: Síndrome de Lynch, genes MMR, ACMG
+- 💻 **Engenharia de Software**: Arquitetura modular, testes, Git
+- 📊 **Ciência de Dados**: SQLite, pandas, plotly
+- 🎨 **Interface Web**: Streamlit interativo
+- 🔬 **Rigor Científico**: Validação, reproduzibilidade
 
 ---
 
-## ⚡ Quick Start
-
-### Pré-requisitos
-- Python 3.9+
-- Git
-- pip
+## 🚀 Quick Start
 
 ### Instalação
 
 ```bash
-# 1. Clonar o repositório
 git clone https://github.com/carla-bioinfo/crispr-mmr-explorer.git
 cd crispr-mmr-explorer
-
-# 2. Criar ambiente virtual
-python3 -m venv venv
 source venv/bin/activate
-
-# 3. Instalar dependências
 pip install -r requirements.txt
+```
 
-# 4. Executar o dashboard (quando pronto)
+### Executar Dashboard
+
+```bash
 streamlit run app.py
 ```
 
----
-
-## 📚 Documentação
-
-- **[INSTALLATION.md](docs/INSTALLATION.md)** — Guia de instalação
-- **[USAGE.md](docs/USAGE.md)** — Como usar
-- **[docs/scientific/](docs/scientific/)** — Documentação científica
-- **[docs/development/](docs/development/)** — Documentação técnica
+Acesse: http://localhost:8501
 
 ---
 
-## 🔬 Dados Utilizados
+## 📊 Fase 3A: SQLite Database
 
-Este projeto utiliza **dados públicos desidentificados**:
+### Dados
+- 10 variantes importadas de ClinVar
+- Validação: 100% (0% diferença)
+- Banco: `data/processed/variants.db`
 
-| Fonte | Descrição |
-|-------|-----------|
-| **ClinVar** | Variantes clínicas | https://www.ncbi.nlm.nih.gov/clinvar/ |
-| **InSiGHT** | Variantes MMR | http://insight.insightgroup.org/ |
-| **Ensembl** | Anotações genômicas | https://www.ensembl.org/ |
-
----
-
-## 🧪 Testes
-
-```bash
-# Executar testes
-pytest
-
-# Com cobertura
-pytest --cov=src --cov-report=html
-```
-
-**Meta**: Cobertura ≥ 80%
+### Scripts
+- `database.py`: Classe VariantDatabase
+- `import_from_csv.py`: Importador de dados
+- `validate_import.py`: Validação de integridade
+- `query_variants.py`: Consultas SQL
 
 ---
 
-## 📊 10 Fases de Desenvolvimento
+## 🎨 Fase 3B: Streamlit Dashboard
 
-| Fase | Objetivo | Status |
-|------|----------|--------|
-| 1 | Fundamentos Biológicos | 🔵 Planejado |
-| 2 | Coleta de Dados | 🔵 Planejado |
-| 3 | Pré-processamento | 🔵 Planejado |
-| 4 | Banco de Variantes | 🔵 Planejado |
-| 5 | Módulo Analítico | 🔵 Planejado |
-| 6 | Visualizações | 🔵 Planejado |
-| 7 | Módulo CRISPR | 🔵 Planejado |
-| 8 | Relatórios PDF | 🔵 Planejado |
-| 9 | Testes Automatizados | 🔵 Planejado |
-| 10 | Documentação | 🔵 Planejado |
+### Seções
 
-**Tempo**: 20-26 semanas
+1. **Home**: Estatísticas + Gráfico ACMG
+2. **Variantes**: Tabela com filtros (Gene, ACMG, Tipo)
+3. **Análises**: Gráficos de distribuição e box plot
+4. **Por Gene**: Análise individual (MLH1, MSH2, MSH6, PMS2)
+5. **Sobre**: Informações do projeto
 
----
-
-## 🚀 Roadmap
-
-### Curto Prazo (Próximas 4 semanas)
-- [ ] Fase 1: Fundamentos científicos
-- [ ] Fase 2: Coleta de dados
-- [ ] Estruturar Git
-
-### Médio Prazo (Próximos 3 meses)
-- [ ] Fases 2-6 completas
-- [ ] Dashboard com 5+ visualizações
-- [ ] Deploy em Streamlit Cloud
-
-### Longo Prazo (Próximos 6 meses)
-- [ ] Todas as 10 fases
-- [ ] Testes ≥ 80%
-- [ ] Publicação em conferência
+### Features
+- ✅ Tabelas interativas
+- ✅ Gráficos Plotly
+- ✅ Filtros dinâmicos
+- ✅ Download CSV
 
 ---
 
-## 🤝 Contribuindo
+## 📈 Dataset
 
-Feedback e sugestões são bem-vindos!
+**Total**: 10 variantes
 
----
+**Por Gene**:
+- MLH1: 3
+- MSH2: 3
+- MSH6: 2
+- PMS2: 2
 
-## 📄 Referências Científicas
+**Classificação ACMG**:
+- Pathogenic (P): 5 (50%)
+- Likely Pathogenic (LP): 4 (40%)
+- Benign (B): 1 (10%)
 
-- Lynch, H. T., et al. (2015). "Hereditary nonpolyposis colorectal cancer". *Nature Reviews Disease Primers*, 1, 15051.
-- Richards, S., et al. (2015). "Standards and guidelines for interpretation of sequence variants". *Nature Biotechnology*, 37(4), 405–413.
-- InSiGHT Database: http://insight.insightgroup.org/
-
----
-
-## 🔐 Segurança & Privacidade
-
-- ✅ Nenhum dado de pacientes
-- ✅ Dados públicos desidentificados
-- ✅ Validação rigorosa de entrada
-- ✅ Proteção contra SQL injection
-- ✅ Variáveis de ambiente para dados sensíveis
+**Score**: Média 3.40 (0-5)
 
 ---
 
-## 📞 Contato
+## 🛠️ Stack Tecnológico
 
-**Autor**: Carla Rodriguês de Moraes  
-**Email**: carlabio.biomol@gmail.com  
-**GitHub**: https://github.com/carla-bioinfo
-
----
-
-## 📜 Licença
-
-MIT License. Veja [LICENSE](LICENSE) para detalhes.
+- Python 3.9
+- SQLite
+- Streamlit 1.28.1
+- pandas, plotly
+- Git/GitHub
 
 ---
 
-## ⭐ Se Gostou, Deixe uma Estrela!
+## 📝 Licença
 
-Se este projeto foi útil, considere deixar uma ⭐ no GitHub!
+MIT License
 
 ---
 
-**Status**: 🟡 Em Desenvolvimento  
-**Última Atualização**: Junho 2026  
-**Versão**: 0.1.0-alpha
+## 👤 Autor
 
+Carla Rodrigues - Bioinformática Clínica
+
+---
+
+**v0.3.0** - Junho 2026
+
+*Making bioinformatics accessible, reproducible, and beautiful.*
