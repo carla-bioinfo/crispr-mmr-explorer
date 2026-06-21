@@ -3,7 +3,7 @@ Modelos Pydantic para validação de variantes
 Define esquema de dados e validações
 """
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 from typing import Optional, Literal
 from datetime import datetime
 
@@ -66,29 +66,29 @@ class VariantInput(BaseModel):
     )
     
     # Validadores customizados
-    @validator('clinvar_id')
+    @field_validator('clinvar_id')
     def validate_clinvar_id(cls, v):
         """Valida formato de ClinVar ID"""
         if not (v.startswith('RCV') or v.startswith('VCV')):
             raise ValueError(f"ClinVar ID deve começar com RCV ou VCV, recebeu: {v}")
         return v
     
-    @validator('hgvs')
+    @field_validator('hgvs')
     def validate_hgvs(cls, v):
         """Valida formato HGVS básico"""
         if ':' not in v and '.' not in v:
             raise ValueError(f"HGVS inválido: {v}. Exemplo: MLH1:c.678_679delGT")
         return v
     
-    @validator('allele_frequency')
+    @field_validator('allele_frequency')
     def validate_allele_frequency(cls, v):
         """Valida frequência alélica"""
         if v is not None and (v < 0 or v > 1):
             raise ValueError(f"Frequência deve estar entre 0 e 1, recebeu: {v}")
         return v
     
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "clinvar_id": "VCV000000001",
                 "gene": "MLH1",
@@ -98,6 +98,7 @@ class VariantInput(BaseModel):
                 "allele_frequency": 0.00001
             }
         }
+    )
 
 
 class VariantInDB(VariantInput):
