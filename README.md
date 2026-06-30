@@ -1,6 +1,8 @@
 # 🧬 CRISPR-MMR Explorer
 Uma **plataforma bioinformática completa** para análise, exploração e educação sobre variantes no sistema Mismatch Repair (MMR) e Síndrome de Lynch (HNPCC).
 
+![Tests](https://github.com/carla-bioinfo/crispr-mmr-explorer/actions/workflows/tests.yml/badge.svg)
+
 ---
 
 ## 📋 Status do Projeto
