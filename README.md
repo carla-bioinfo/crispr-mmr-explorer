@@ -272,7 +272,7 @@ crispr-mmr-explorer/
 
 ## 📞 Contato e Contribuições
 
-**Desenvolvido por:** Especialista em Bioinformática Clínica Translacional  
+**Desenvolvido por:** Estudante em Bioinformática Clínica Translacional  
 **GitHub:** [carla-bioinfo/crispr-mmr-explorer](https://github.com/carla-bioinfo/crispr-mmr-explorer)  
 **Versão:** v0.5.0 (Etapas 0.7-0.8 Completas)  
 **Data Última Atualização:** 17 de Junho de 2026
