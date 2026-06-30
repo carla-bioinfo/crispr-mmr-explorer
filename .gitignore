@@ -38,3 +38,6 @@ reports/*
 # OS
 .DS_Store
 Thumbs.db
+.coverage
+*.backup
+output.csv
