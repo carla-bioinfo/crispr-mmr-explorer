@@ -329,3 +329,26 @@ crispr-mmr-explorer/
 3. BONUS: Dashboard Streamlit
 4. BONUS: APIs FastAPI
 5. 
+
+---
+
+## 🌐 App Online (v1.5.0)
+
+**Streamlit Dashboard em produção:**
+https://crispr-mmr-explorer-ftabun9dmg7yu8sxappd4ft.streamlit.app
+
+### Funcionalidades da Dashboard:
+- 🏠 **Início**: Estatísticas e KPIs da plataforma
+- 📁 **Upload & Classificar**: Widget para upload de arquivos VCF/TXT
+- 📊 **Análise**: Gráficos Plotly interativos
+  - Bar chart: Variantes por Gene MMR (MLH1, MSH2, MSH6, PMS2, EPCAM)
+  - Pie chart: Proporção de genes
+  - Tabela interativa: Gene, Variantes, Pathogenic
+- ℹ️ **Sobre**: Informações, tecnologias, referências
+
+### Stack:
+- **Frontend**: Streamlit 1.30.0+
+- **Visualização**: Plotly 5.15.0+
+- **Deploy**: Streamlit Cloud
+- **Status**: Beta 🚀
+
