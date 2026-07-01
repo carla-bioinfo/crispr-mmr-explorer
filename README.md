@@ -1,354 +1,351 @@
 # 🧬 CRISPR-MMR Explorer
-Uma **plataforma bioinformática completa** para análise, exploração e educação sobre variantes no sistema Mismatch Repair (MMR) e Síndrome de Lynch (HNPCC).
 
-![Tests](https://github.com/carla-bioinfo/crispr-mmr-explorer/actions/workflows/tests.yml/badge.svg)
+**Plataforma de análise de variantes no sistema Mismatch Repair (MMR) e Síndrome de Lynch.**
 
----
-
-## 📋 Status do Projeto
-
-### ✅ Fases Completadas
-
-**Refatoração v0.5.0 - VERSÃO ATUAL**
-- ✅ **Etapa 0.1**: ACMG Classifier v0.4.0 com ACMG/AMP 2015 correto
-- ✅ **Etapa 0.2**: Pydantic Validation + Limpeza de código
-- ✅ **Etapa 0.3**: Logging + Exception Handling (v0.5.0)
-- ✅ **Etapa 0.4**: Testes + Code Coverage iniciais (v0.5.0)
-- ✅ **Etapa 0.5**: Aumentar Coverage para 78% (v0.5.0)
-- ✅ **Etapa 0.6**: Aumentar Coverage para 86% + Error Handling
-- ✅ **Etapa 0.7**: Migração Pydantic V1 → V2 (Zero warnings) ← NOVO!
-- ✅ **Etapa 0.8**: Refatorar __main__ para função testável (94% coverage) ← NOVO!
-
-**Próximas Etapas**
-- 🔄 **Etapa 0.9**: GitHub Actions CI/CD (testes automáticos)
-- 📋 **Etapa 1.0**: Release v1.0.0 (tag oficial)
-- 📋 **BONUS**: Dashboard Streamlit + APIs FastAPI
+> ⚠️ **Observação Importante**: Este projeto é desenvolvido por uma **estudante em formação**. Sempre há espaço para melhorias e aprendizado. Feedback e sugestões são bem-vindos!
 
 ---
 
-## 📊 Métricas Atuais (Etapas 0.7-0.8)
+## 📊 Status Atual (Julho 2026)
 
-| Métrica | Valor | Status |
-|---------|-------|--------|
-| **Coverage acmg_analyzer.py** | 94% | ✅ EXCELENTE |
-| **Testes Unitários + Integração** | 43 | ✅ ROBUSTO |
-| **Testes Passando** | 43/43 (100%) | ✅ PERFEITO |
-| **Linhas Cobertas** | 115/122 | ✅ |
-| **Genes MMR Testados** | 5 | ✅ MLH1, MSH2, MSH6, PMS2, EPCAM |
-| **Critérios ACMG** | 4 | ✅ PVS1, PS1, PM2, BA1 (100% cobertura) |
-| **Warnings Pydantic** | 0 | ✅ ZERO WARNINGS |
+| Versão | Status | Descrição |
+|--------|--------|-----------|
+| **v1.5.0** | ✅ Completo | Streamlit Dashboard com mock data |
+| **v2.0.0** | ✅ Completo | FastAPI Backend com 3 endpoints |
+| **v2.0.1** | ✅ Completo | ACMGClassifier Real integrado |
+| **v2.0.2** | ✅ Completo | Streamlit ↔ FastAPI End-to-End |
 
 ---
 
-## 🧪 Testes - Etapas 0.7-0.8 NOVA!
+## 🚀 O Que Foi Feito
 
-### Progressão de Testes e Coverage
+### v2.0.0 - FastAPI Backend
+- ✅ Arquitetura modular (main.py, routes/, schemas.py)
+- ✅ 3 Endpoints: `GET /`, `GET /health/`, `POST /api/classify`
+- ✅ Documentação automática `/docs` (Swagger UI)
+- ✅ CORS habilitado para Streamlit
+- ✅ 5 testes unitários (TestClient)
 
-| Etapa | Testes | Coverage | Status |
-|-------|--------|----------|--------|
-| **0.4** | 6 | 62% | ✅ |
-| **0.5** | 27 | 78% | ✅ |
-| **0.6** | 40 | 86% | ✅ |
-| **0.7** | 40 | 86% | ✅ Pydantic V2 OK |
-| **0.8** | 43 | 94% | ✅ ATUAL |
-| **0.9** | 43 | 94% | 🔄 Próxima |
-| **1.0** | 43 | 94% | 📋 Release |
+**Tecnologias**: FastAPI 0.128.8, Pydantic 2.13.4, Uvicorn 0.24.0
 
-### Estrutura Completa de Testes
-```
-tests/
-├── conftest.py                              # 6 fixtures reutilizáveis
-├── unit/
-│   ├── test_acmg_analyzer.py                # 5 testes
-│   ├── test_acmg_criteria.py                # 12 testes
-│   ├── test_acmg_classifier_combinations.py # 6 testes
-│   ├── test_acmg_process_csv.py             # 3 testes
-│   ├── test_acmg_error_handling.py          # 6 testes
-│   ├── test_acmg_exception_forcing.py       # 3 testes
-│   └── test_main_function.py                # 3 testes ⭐ NOVO (Etapa 0.8)
-└── integration/
-    ├── test_integration.py                  # 1 teste
-    ├── test_main_block.py                   # 2 testes
-    └── test_main_advanced.py                # 2 testes
-```
+### v2.0.1 - ACMGClassifier Real
+- ✅ Adapter Pattern: APIVariantInput → ACMGVariantInput
+- ✅ Lógica ACMG/AMP 2015 real executando
+- ✅ Classificações: Pathogenic, Likely Pathogenic, VUS, Benign, Likely Benign
+- ✅ Validação de genes MMR (MLH1, MSH2, MSH6, PMS2, EPCAM)
+- ✅ Logging detalhado com timestamps
+- ✅ **7 testes passando (100% cobertura)**
 
-### Rodar Testes
+**Resultados Testados**:
+- Substitution (A→G) → **VUS** ✓
+- Deletion (AGT→A) → **Likely Pathogenic** ✓
 
+### v2.0.2 - Streamlit ↔ FastAPI Integração
+- ✅ Frontend conectado ao Backend via requests.post()
+- ✅ Upload de VCF/TXT com parse correto (skip header)
+- ✅ Seletor de gene MMR obrigatório
+- ✅ Status da API em tempo real (health check)
+- ✅ Tabela de resultados com classificações reais
+- ✅ Gráfico Plotly (distribuição de patogenicidade)
+- ✅ Download CSV dos resultados
+- ✅ **Fluxo end-to-end testado e funcionando**
+
+---
+
+## 🛠️ Stack Técnico
+🎉 Push bem-sucedido!
+84c6be0..c8b3722  main -> main
+Suas mudanças estão no GitHub! ✅
+
+🎯 Comando 2: Criar README.md Completo
+Execute isto:
+bashcat > README.md << 'PYEOF'
+# 🧬 CRISPR-MMR Explorer
+
+**Plataforma de análise de variantes no sistema Mismatch Repair (MMR) e Síndrome de Lynch.**
+
+> ⚠️ **Observação Importante**: Este projeto é desenvolvido por uma **estudante em formação**. Sempre há espaço para melhorias e aprendizado. Feedback e sugestões são bem-vindos!
+
+---
+
+## 📊 Status Atual (Julho 2026)
+
+| Versão | Status | Descrição |
+|--------|--------|-----------|
+| **v1.5.0** | ✅ Completo | Streamlit Dashboard com mock data |
+| **v2.0.0** | ✅ Completo | FastAPI Backend com 3 endpoints |
+| **v2.0.1** | ✅ Completo | ACMGClassifier Real integrado |
+| **v2.0.2** | ✅ Completo | Streamlit ↔ FastAPI End-to-End |
+
+---
+
+## 🚀 O Que Foi Feito
+
+### v2.0.0 - FastAPI Backend
+- ✅ Arquitetura modular (main.py, routes/, schemas.py)
+- ✅ 3 Endpoints: `GET /`, `GET /health/`, `POST /api/classify`
+- ✅ Documentação automática `/docs` (Swagger UI)
+- ✅ CORS habilitado para Streamlit
+- ✅ 5 testes unitários (TestClient)
+
+**Tecnologias**: FastAPI 0.128.8, Pydantic 2.13.4, Uvicorn 0.24.0
+
+### v2.0.1 - ACMGClassifier Real
+- ✅ Adapter Pattern: APIVariantInput → ACMGVariantInput
+- ✅ Lógica ACMG/AMP 2015 real executando
+- ✅ Classificações: Pathogenic, Likely Pathogenic, VUS, Benign, Likely Benign
+- ✅ Validação de genes MMR (MLH1, MSH2, MSH6, PMS2, EPCAM)
+- ✅ Logging detalhado com timestamps
+- ✅ **7 testes passando (100% cobertura)**
+
+**Resultados Testados**:
+- Substitution (A→G) → **VUS** ✓
+- Deletion (AGT→A) → **Likely Pathogenic** ✓
+
+### v2.0.2 - Streamlit ↔ FastAPI Integração
+- ✅ Frontend conectado ao Backend via requests.post()
+- ✅ Upload de VCF/TXT com parse correto (skip header)
+- ✅ Seletor de gene MMR obrigatório
+- ✅ Status da API em tempo real (health check)
+- ✅ Tabela de resultados com classificações reais
+- ✅ Gráfico Plotly (distribuição de patogenicidade)
+- ✅ Download CSV dos resultados
+- ✅ **Fluxo end-to-end testado e funcionando**
+
+---
+
+## 🛠️ Stack Técnico
+┌─────────────────────────────────────────────────────┐
+│ Frontend: Streamlit v1.50.0 (Python)                │
+│ - Interface web interativa                          │
+│ - Upload de arquivos VCF/TXT                        │
+│ - Visualizações Plotly                              │
+└─────────────────┬───────────────────────────────────┘
+│ requests.post()
+↓
+┌─────────────────────────────────────────────────────┐
+│ Backend: FastAPI 0.128.8 (Python)                   │
+│ - API RESTful com 3 endpoints                       │
+│ - Validação Pydantic                                │
+│ - Documentação automática /docs                     │
+│ - Adapter Pattern (desacoplamento)                  │
+└─────────────────┬───────────────────────────────────┘
+│
+↓
+┌─────────────────────────────────────────────────────┐
+│ Core: ACMGClassifier v0.5.0 (Python)                │
+│ - Lógica ACMG/AMP 2015                              │
+│ - Classificação de variantes genômicas              │
+│ - Suporte a 5 genes MMR                             │
+└─────────────────────────────────────────────────────┘
+**Dependências principais**:
+- fastapi==0.128.8
+- uvicorn[standard]==0.24.0
+- pydantic==2.13.4
+- streamlit>=1.50.0
+- pandas>=2.0.0
+- plotly>=5.15.0
+- requests>=2.31.0
+
+---
+
+## 📦 Instalação & Uso
+
+### 1. Clonar repositório
 ```bash
-# Ativar virtual environment
-source ~/crispr-mmr-explorer/venv/bin/activate
-
-# Todos os testes
-pytest tests/ -v
-
-# Apenas testes unitários
-pytest tests/unit/ -v
-
-# Apenas testes de integração
-pytest tests/integration/ -v
-
-# Code coverage detalhado
-pytest tests/ --cov=src.variants.acmg_analyzer --cov-report=term-missing
-
-# Teste específico
-pytest tests/unit/test_main_function.py -v
-```
-
----
-
-## 🧬 Cobertura Bioinformática
-
-### Genes Mismatch Repair (MMR) - 100% Testados
-- ✅ **MLH1** (Ligase de DNA)
-- ✅ **MSH2** (Sensor de mismatch)
-- ✅ **MSH6** (Sensor de mismatch)
-- ✅ **PMS2** (Exonuclease 1)
-- ✅ **EPCAM** (Regulador)
-
-### Critérios ACMG/AMP 2015 - 100% Testados
-- ✅ **PVS1**: Null variant em gene com LoF
-- ✅ **PS1**: Já reportado como Pathogenic
-- ✅ **PM2**: Frequência muito baixa
-- ✅ **BA1**: Frequência alta (benigno)
-- ✅ **Combinações**: Lógica de múltiplos critérios
-
-### Tipos de Variantes Testadas
-- ✅ Frameshift (insertion/deletion)
-- ✅ Stop-gained (nonsense)
-- ✅ Missense (substitution)
-- ✅ Splice site (splicing)
-- ✅ Duplication (copy number)
-
----
-
-## 🚀 Instalação e Setup
-
-### Requisitos
-- Python 3.9+
-- pip ou conda
-
-### Instalação
-
-```bash
-# Clonar repositório
 git clone https://github.com/carla-bioinfo/crispr-mmr-explorer.git
 cd crispr-mmr-explorer
+```
 
-# Criar virtual environment
-python3 -m venv venv
-source venv/bin/activate  # Linux/Mac
-# ou
-venv\Scripts\activate  # Windows
-
-# Instalar dependências
+### 2. Instalar dependências
+```bash
 pip install -r requirements.txt
-
-# Rodar testes
-pytest tests/ -v
 ```
+
+### 3. Rodar FastAPI Backend
+```bash
+python3 -m uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Acesse documentação em: **http://localhost:8000/docs**
+
+### 4. Rodar Streamlit Frontend (novo terminal)
+```bash
+streamlit run streamlit_app/app.py
+```
+
+Acesse app em: **http://localhost:8501**
 
 ---
 
-## 📚 Uso da Biblioteca
+## 🧪 Testes
 
-### Classificar Uma Variante (ACMG/AMP 2015)
-
-```python
-from src.variants.acmg_analyzer import ACMGClassifier
-from src.variants.models import VariantInput
-
-# Criar classifier
-classifier = ACMGClassifier()
-
-# Criar variante
-variant = VariantInput(
-    clinvar_id="VCV000000001",
-    gene="MLH1",
-    hgvs="MLH1:c.100delA",
-    tipo="frameshift",
-    classificacao="Pathogenic",
-    allele_frequency=0.000001
-)
-
-# Classificar
-resultado = classifier.classify(variant)
-print(f"Classificação: {resultado}")
-# Output: Classificação: Pathogenic
+```bash
+pytest tests/test_api.py -v
 ```
 
-### Processar Arquivo CSV
+**Resultado**: ✅ 7/7 testes passando
 
-```python
-from src.variants.acmg_analyzer import process_csv
-
-# Processar arquivo
-total = process_csv(
-    "data/raw/clinvar_mmr_variants.csv",
-    "data/processed/output_with_acmg.csv"
-)
-
-print(f"✅ {total} variantes processadas")
-```
+Cobertura:
+- ✅ Health check endpoint
+- ✅ Root endpoint
+- ✅ Classificação válida (substitution → VUS)
+- ✅ Classificação válida (deletion → Likely Pathogenic)
+- ✅ Validação: gene obrigatório
+- ✅ Validação: position deve ser int
+- ✅ Validação: gene deve ser MLH1/MSH2/MSH6/PMS2/EPCAM
 
 ---
 
-## 📁 Estrutura do Projeto
+## 🔬 Exemplo de Uso
 
+### Via API (curl)
+```bash
+curl -X POST http://localhost:8000/api/classify \
+  -H "Content-Type: application/json" \
+  -d '{
+    "chromosome": "3",
+    "position": 36993722,
+    "ref": "A",
+    "alt": "G",
+    "gene": "MLH1"
+  }'
 ```
+
+**Resposta**:
+```json
+{
+  "status": "success",
+  "data": {
+    "variant_id": "RCV000036993722",
+    "gene": "MLH1",
+    "pathogenicity_class": "VUS",
+    "acmg_criteria": ["PVS1", "PM2", "PP3"],
+    "evidence_summary": "Classificado por ACMGClassifier v0.5.0...",
+    "confidence_score": 0.85
+  },
+  "message": "Variante MLH1 classificada como VUS"
+}
+```
+
+### Via Streamlit
+1. Abra http://localhost:8501
+2. Vá para "📁 Upload & Classificar"
+3. Selecione gene MMR
+4. Faça upload de arquivo VCF/TXT
+5. Clique "🔍 Classificar com API"
+6. Veja tabela + gráfico + download CSV
+
+---
+
+## 📂 Estrutura do Projeto
 crispr-mmr-explorer/
-│
 ├── src/
-│   ├── variants/
-│   │   ├── acmg_analyzer.py          (122 linhas, 94% coverage)
-│   │   ├── models.py                 (Pydantic V2, zero warnings)
-│   │   ├── database.py
-│   │   ├── query_variants.py
-│   │   └── ...
-│   │
-│   ├── utils/
-│   │   ├── logger.py
-│   │   ├── exceptions.py
-│   │   └── ...
-│   │
-│   └── [outras pastas]
-│
+│   ├── api/                          # FastAPI Backend
+│   │   ├── main.py                   # Aplicação principal
+│   │   ├── adapter.py                # Adapter pattern
+│   │   ├── schemas.py                # Modelos Pydantic
+│   │   └── routes/
+│   │       ├── health.py             # GET /health
+│   │       └── variants.py           # POST /api/classify
+│   └── variants/
+│       ├── acmg_analyzer.py          # ACMGClassifier
+│       └── models.py                 # VariantInput interno
+├── streamlit_app/
+│   └── app.py                        # Interface Streamlit
 ├── tests/
-│   ├── conftest.py
-│   ├── unit/            (40 testes)
-│   └── integration/      (3 testes)
-│
-├── data/
-│   ├── raw/             (dados de entrada)
-│   └── processed/       (resultados)
-│
-├── README.md            ← ESTE ARQUIVO
-├── CHANGELOG.md
-├── requirements.txt
-└── venv/                (virtual environment)
-```
-
+│   └── test_api.py                   # 7 testes unitários
+├── requirements.txt                  # Dependências
+└── README.md                         # Este arquivo
 ---
 
-## 🔬 Metodologia Científica
+## 🎓 Aprendizados & Conceitos
 
-### Padrões Internacionais Utilizados
+### FastAPI
+- Decoradores `@app.get()`, `@app.post()`
+- Type hints para validação automática
+- Pydantic para schemas
+- CORS middleware
+- Documentação automática (OpenAPI)
 
-1. **ACMG/AMP 2015** - Richards et al. (PMID: 25741868)
-   - Classificação de variantes: Pathogenic/Likely Pathogenic/VUS/Likely Benign/Benign
-   - Critérios evidência-baseados
-   - Aplicado a genes MMR da Síndrome de Lynch
+### Pydantic
+- `BaseModel` para validação
+- `Field()` com validações customizadas
+- `Literal` para enums
+- Conversão automática de tipos
 
-2. **Frequência Alélica** - gnomAD
-   - Populações globais
-   - Impacto na classificação (BA1, PM2)
-
-3. **Síndrome de Lynch (HNPCC)**
-   - Penetrância variável
-   - Validação funcional necessária
-   - Segregação familiar crítica
-
----
-
-## 📊 Roadmap Futuro
-
-### Etapa 0.9 (Próxima - GitHub Actions CI/CD)
-- [ ] Criar `.github/workflows/tests.yml`
-- [ ] Testes automáticos em cada push
-- [ ] Coverage reports no GitHub
-- [ ] Badge no README
-
-### Etapa 1.0 (Release Official)
-- [ ] Tag release v1.0.0
-- [ ] Atualizar CHANGELOG.md
-- [ ] GitHub Release com notas
-- [ ] Anúncio no LinkedIn
-
-### BONUS (Dashboard + APIs)
-- [ ] Dashboard Streamlit (5 páginas)
-- [ ] APIs FastAPI (2 endpoints)
-- [ ] Deploy no Streamlit Cloud
-
----
-
-## 📞 Contato e Contribuições
-
-**Desenvolvido por:** Estudante em Bioinformática Clínica Translacional  
-**GitHub:** [carla-bioinfo/crispr-mmr-explorer](https://github.com/carla-bioinfo/crispr-mmr-explorer)  
-**Versão:** v0.5.0 (Etapas 0.7-0.8 Completas)  
-**Data Última Atualização:** 17 de Junho de 2026
-
----
-
-## 🎓 Referências
+### Adapter Pattern
+- Desacopla API REST de lógica interna
+- Converte entre dois formatos de dados
+- Facilita testes e manutenção
 
 ### ACMG/AMP 2015
-- **Autores:** Richards, S., Aziz, N., Bast, S., et al.
-- **PMID:** 25741868
-- **DOI:** 10.1038/gim.2015.30
-- **Título:** Standards and Guidelines for the Interpretation of Sequence Variants
+- Critérios PVS1, PS1, PM2, BA1
+- Aplicação a genes MMR
+- Classificação de variantes germinativas
 
-### Síndrome de Lynch
-- **Genes:** MLH1, MSH2, MSH6, PMS2, EPCAM
-- **Sistema:** Mismatch Repair (MMR)
-- **Base:** InSiGHT database
-
-### Ferramentas
-- **Python 3.9.2** | **Pytest 7.4.2** | **Pydantic 2.3.0**
-- **pandas 2.0.3** | **Coverage 7.10.7**
+### Testing
+- TestClient do FastAPI
+- Cobertura de happy path + edge cases
+- Validação de tipos com Pydantic
+- HTTP status codes (200, 400, 422, 500)
 
 ---
 
-## 📈 Histórico de Versões
+## 🚀 Próximas Etapas
 
-### v0.5.0 (Etapas 0.7-0.8) - 17 JUN 2026
-- ✅ Migração Pydantic V1 → V2 (Etapa 0.7)
-- ✅ Refatoração __main__ → main() (Etapa 0.8)
-- ✅ Coverage: 86% → 94%
-- ✅ Testes: 40 → 43
-- ✅ Zero Pydantic warnings
+### v2.1.0 - Melhorias
+- [ ] Conectar dados reais de ClinVar/InSiGHT
+- [ ] Adicionar allele frequency (gnomAD)
+- [ ] Expandir critérios ACMG (PP3, BP4, etc)
+- [ ] Histórico de classificações
 
-### v0.5.0 (Etapa 0.6) - 16 JUN 2026
-- ✅ Aumentar coverage para 86%
-- ✅ 13 novos testes
-- ✅ Error handling robusto
-- ✅ 40 testes totais passando
+### v3.0.0 - Frontend React
+- [ ] Redesign com React + Tailwind CSS
+- [ ] Componentes reutilizáveis
+- [ ] Dark mode
+- [ ] Responsivo (mobile-first)
+- [ ] API continua a mesma! (FastAPI)
 
-### v0.5.0 (Etapas 0.1-0.5)
-- ✅ ACMG Classifier profissional
-- ✅ Pydantic validation
-- ✅ Logging + Exception handling
-- ✅ 27 testes com 78% coverage
-
----
-
-**✅ Projeto em desenvolvimento ativo!**
-
-**Próximas ações:**
-1. Etapa 0.9: GitHub Actions CI/CD
-2. Etapa 1.0: Release v1.0.0
-3. BONUS: Dashboard Streamlit
-4. BONUS: APIs FastAPI
-5. 
+### Deploy
+- [ ] Railway (free tier)
+- [ ] CI/CD automático (GitHub Actions)
+- [ ] Variáveis de ambiente
+- [ ] Logs estruturados
 
 ---
 
-## 🌐 App Online (v1.5.0)
+## 🔗 Links
 
-**Streamlit Dashboard em produção:**
-https://crispr-mmr-explorer-ftabun9dmg7yu8sxappd4ft.streamlit.app
+- **GitHub**: https://github.com/carla-bioinfo/crispr-mmr-explorer
+- **Streamlit Online**: (deployment em breve)
+- **API Docs**: http://localhost:8000/docs (local)
 
-### Funcionalidades da Dashboard:
-- 🏠 **Início**: Estatísticas e KPIs da plataforma
-- 📁 **Upload & Classificar**: Widget para upload de arquivos VCF/TXT
-- 📊 **Análise**: Gráficos Plotly interativos
-  - Bar chart: Variantes por Gene MMR (MLH1, MSH2, MSH6, PMS2, EPCAM)
-  - Pie chart: Proporção de genes
-  - Tabela interativa: Gene, Variantes, Pathogenic
-- ℹ️ **Sobre**: Informações, tecnologias, referências
+---
 
-### Stack:
-- **Frontend**: Streamlit 1.30.0+
-- **Visualização**: Plotly 5.15.0+
-- **Deploy**: Streamlit Cloud
-- **Status**: Beta 🚀
+## 📝 Autora
 
+**Punipuni** - Estudante de Biomedicina + Data Science
+
+- GitHub: [@carla-bioinfo](https://github.com/carla-bioinfo)
+- Especialização: Síndrome de Lynch, Genes MMR, Bioinformática
+
+> "Sempre estudante, nunca especialista. Cada projeto é uma oportunidade de aprender."
+
+---
+
+## 📚 Referências Científicas
+
+- **ACMG/AMP 2015**: [Guidelines for the interpretation of sequence variants](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4544753/)
+- **Lynch Syndrome**: [NIH Genetics Home Reference](https://ghr.nlm.nih.gov/condition/lynch-syndrome)
+- **MMR Genes**: MLH1, MSH2, MSH6, PMS2, EPCAM
+
+---
+
+## 📄 Licença
+
+MIT License - Veja LICENSE.md para detalhes.
+
+---
+
+**Última atualização**: Julho 1, 2026 | v2.0.2
