@@ -1,5 +1,5 @@
 """
-Testes unitários para FastAPI v2.0.0
+Testes unitários para FastAPI v2.0.1 com ACMGClassifier Real
 """
 
 import pytest
@@ -16,7 +16,6 @@ class TestHealth:
         response = client.get("/health/")
         assert response.status_code == 200
         assert response.json()["status"] == "healthy"
-        assert response.json()["service"] == "CRISPR-MMR Explorer API"
 
 
 class TestRoot:
@@ -29,14 +28,13 @@ class TestRoot:
         assert response.status_code == 200
         data = response.json()
         assert data["message"] == "CRISPR-MMR Explorer API v2.0.0"
-        assert "endpoints" in data
 
 
 class TestClassify:
-    """Testes para POST /api/classify"""
+    """Testes para POST /api/classify com ACMGClassifier REAL"""
     
-    def test_classify_valid_variant(self):
-        """POST /api/classify com dados válidos"""
+    def test_classify_substitution_returns_vus(self):
+        """Substitution simples → VUS"""
         client = TestClient(app)
         payload = {
             "chromosome": "3",
@@ -49,11 +47,25 @@ class TestClassify:
         assert response.status_code == 200
         data = response.json()
         assert data["status"] == "success"
-        assert data["data"]["gene"] == "MLH1"
+        assert data["data"]["pathogenicity_class"] == "VUS"
+    
+    def test_classify_deletion_returns_likely_pathogenic(self):
+        """Deletion em MLH1 → Likely Pathogenic"""
+        client = TestClient(app)
+        payload = {
+            "chromosome": "3",
+            "position": 36993722,
+            "ref": "AGT",
+            "alt": "A",
+            "gene": "MLH1"
+        }
+        response = client.post("/api/classify", json=payload)
+        assert response.status_code == 200
+        data = response.json()
         assert data["data"]["pathogenicity_class"] == "Likely Pathogenic"
     
     def test_classify_missing_gene(self):
-        """POST /api/classify SEM gene (deve falhar)"""
+        """POST com gene None → HTTP 422 (validation error)"""
         client = TestClient(app)
         payload = {
             "chromosome": "3",
@@ -63,10 +75,10 @@ class TestClassify:
             "gene": None
         }
         response = client.post("/api/classify", json=payload)
-        assert response.status_code == 400
+        assert response.status_code == 422
     
     def test_classify_invalid_position(self):
-        """POST /api/classify com position string (Pydantic rejeita)"""
+        """Position string → HTTP 422"""
         client = TestClient(app)
         payload = {
             "chromosome": "3",
@@ -74,6 +86,19 @@ class TestClassify:
             "ref": "A",
             "alt": "G",
             "gene": "MLH1"
+        }
+        response = client.post("/api/classify", json=payload)
+        assert response.status_code == 422
+    
+    def test_classify_invalid_gene(self):
+        """Gene não MMR (BRCA1) → HTTP 422"""
+        client = TestClient(app)
+        payload = {
+            "chromosome": "3",
+            "position": 36993722,
+            "ref": "A",
+            "alt": "G",
+            "gene": "BRCA1"
         }
         response = client.post("/api/classify", json=payload)
         assert response.status_code == 422

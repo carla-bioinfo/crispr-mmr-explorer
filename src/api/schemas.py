@@ -2,18 +2,21 @@
 Modelos Pydantic para validação de entrada/saída
 """
 
-from pydantic import BaseModel
-from typing import Optional, List
+from pydantic import BaseModel, Field
+from typing import Optional, List, Literal
 
 # ============ VARIANT CLASSIFICATION ============
 
 class VariantInput(BaseModel):
     """Modelo para receber variante do usuário"""
-    chromosome: str
-    position: int
-    ref: str
-    alt: str
-    gene: Optional[str] = None
+    chromosome: str = Field(..., description="Cromossomo (1-22, X, Y, MT)")
+    position: int = Field(..., description="Posição genômica")
+    ref: str = Field(..., description="Alelo referência")
+    alt: str = Field(..., description="Alelo alternativo")
+    gene: Literal['MLH1', 'MSH2', 'MSH6', 'PMS2', 'EPCAM'] = Field(
+        ..., 
+        description="Gene MMR (um dos 5 principais)"
+    )
     
     class Config:
         json_schema_extra = {
@@ -30,7 +33,7 @@ class ACMGClassification(BaseModel):
     """Modelo para retornar classificação ACMG/AMP"""
     variant_id: str
     gene: str
-    pathogenicity_class: str  # Pathogenic, Likely Pathogenic, VUS, Likely Benign, Benign
+    pathogenicity_class: str
     acmg_criteria: List[str]
     evidence_summary: str
     confidence_score: float
