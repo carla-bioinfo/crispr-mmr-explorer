@@ -192,29 +192,29 @@ def process_csv(input_file: str, output_file: str) -> int:
 
 def main() -> None:
     """Função main para execução do classificador ACMG"""
-print("\n" + "="*80)
-print("🧬 ACMG Classifier v0.5.0 - Com Logging + Exception Handling")
-print("="*80 + "\n")
+    print("\n" + "="*80)
+    print("🧬 ACMG Classifier v0.5.0 - Com Logging + Exception Handling")
+    print("="*80 + "\n")
 
-try:
-    input_csv = "data/raw/clinvar_mmr_variants.csv"
-    output_csv = "data/processed/clinvar_mmr_with_acmg_v0.5.0.csv"
+    try:
+        input_csv = "data/raw/clinvar_mmr_variants.csv"
+        output_csv = "data/processed/clinvar_mmr_with_acmg_v0.5.0.csv"
     
-    total = process_csv(input_csv, output_csv)
+        total = process_csv(input_csv, output_csv)
     
-    print(f"✅ Sucesso! {total} variantes processadas.")
-    print(f"📂 Resultado salvo em: {output_csv}")
-    print(f"📝 Logs salvos em: logs/crispr_mmr_*.log")
+        print(f"✅ Sucesso! {total} variantes processadas.")
+        print(f"📂 Resultado salvo em: {output_csv}")
+        print(f"📝 Logs salvos em: logs/crispr_mmr_*.log")
 
-except FileProcessingError as e:
-    print(f"❌ Erro no processamento: {e}")
-    sys.exit(1)
+    except FileProcessingError as e:
+        print(f"❌ Erro no processamento: {e}")
+        sys.exit(1)
 
-except Exception as e:
-    print(f"❌ Erro inesperado: {e}")
-    sys.exit(1)
+    except Exception as e:
+        print(f"❌ Erro inesperado: {e}")
+        sys.exit(1)
 
-print("\n" + "="*80 + "\n")
+        print("\n" + "="*80 + "\n")
 
-if __name__ == "__main__":
+    if __name__ == "__main__":
     main()
