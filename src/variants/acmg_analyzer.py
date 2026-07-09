@@ -114,6 +114,37 @@ class ACMGClassifier:
             self.logger.error(f"Erro ao classificar {variant.clinvar_id}: {str(e)}")
             raise ACMGClassificationError(f"Erro na classificação: {str(e)}")
 
+    def classify_with_details(self, variant: dict) -> tuple:
+        """ACMG/AMP 2015 com rastreabilidade: (class, criteria, confidence)."""
+        criteria = []
+        points = 0
+        
+        mutation_type = variant.get("type", "substitution").lower()
+        if mutation_type in ["deletion", "insertion", "frameshift"]:
+            criteria.append("PVS1")
+            points += 4
+        
+        allele_freq = variant.get("allele_frequency", 0.01)
+        if allele_freq < 0.001:
+            criteria.append("PM2")
+            points += 1
+        
+        if allele_freq < 0.001 and mutation_type != "substitution":
+            criteria.append("PP3")
+            points += 1
+        
+        if points >= 6:
+            pathogenicity_class = "PATHOGENIC"
+            confidence = 0.95
+        elif points >= 3:
+            pathogenicity_class = "LIKELY_PATHOGENIC"
+            confidence = 0.80
+        else:
+            pathogenicity_class = "VUS"
+            confidence = 0.50
+        
+        return pathogenicity_class, criteria, confidence
+
 
 def process_csv(input_file: str, output_file: str) -> int:
     """
