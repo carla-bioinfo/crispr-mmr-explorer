@@ -40,18 +40,18 @@ def classify_variant(variant: VariantInput) -> ClassificationResponse:
         acmg_variant = api_variant_to_acmg(variant)
         logger.debug(f"Adaptado para ACMGVariantInput: {acmg_variant.clinvar_id}")
         
-        # Executar classificação real
-        pathogenicity_class = classifier.classify(acmg_variant)
-        logger.info(f"Classificação: {acmg_variant.clinvar_id} → {pathogenicity_class}")
+        # Executar classificação real (com detalhes ACMG)
+        pathogenicity_class, acmg_criteria, confidence_score = classifier.classify_with_details(acmg_variant.__dict__)
+        logger.info(f"Classificação: {acmg_variant.clinvar_id} → {pathogenicity_class} (confiança: {confidence_score})")
         
         # Construir resposta estruturada
         classification = ACMGClassification(
             variant_id=acmg_variant.clinvar_id,
             gene=variant.gene,
             pathogenicity_class=pathogenicity_class,
-            acmg_criteria=["PVS1", "PM2", "PP3"],  # Simplificado; em produção seria detalhado
+            acmg_criteria=acmg_criteria,
             evidence_summary=f"Classificado por ACMGClassifier v0.5.0 usando regras ACMG/AMP 2015",
-            confidence_score=0.85,
+            confidence_score=confidence_score,
         )
         
         return ClassificationResponse(
