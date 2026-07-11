@@ -1,237 +1,308 @@
-# CRISPR-MMR Explorer v2.0.2
+# CRISPR-MMR Explorer
 
-> **⚠️ Projeto Acadêmico de Aprendizagem**  
-> Desenvolvido como estudante de Biomedicina + Data Science para consolidar conhecimentos em bioinformática clínica, APIs REST e CI/CD.
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.128.8-green)](https://fastapi.tiangolo.com/)
+[![Tests Passing](https://img.shields.io/badge/tests-50%2F50%20passing-success)](./tests/)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-**Status:** ✅ LIVE em Produção (Railway) — [Teste Aqui](https://crispr-mmr-explorer-production.up.railway.app/health)
+Classificação de variantes genéticas em genes *Mismatch Repair* (MMR) usando critérios ACMG/AMP 2015, com foco em **Síndrome de Lynch**.
 
----
-
-## 🎓 O Projeto (Perspectiva de Aprendizado)
-
-Este projeto nasceu de uma pergunta: **"Como posso integrar classificação ACMG/AMP 2015 com uma API moderna e deployá-la em produção?"**
-
-**Objetivo de Aprendizagem:**
-- ✅ Implementar classificação de variantes genéticas (ACMG/AMP 2015)
-- ✅ Construir API REST com FastAPI (framework moderno)
-- ✅ Aprender CI/CD (GitHub → Railway webhook)
-- ✅ Debugging em produção (problema real: $PORT não expandia)
-- ✅ Documentação técnica profissional
-- ✅ Testes unitários (TDD mindset)
-
-**Resultado:** API funcional classificando variantes MLH1 em tempo real.
+**Status:** v2.0.2 | 🔴 **Fase 4 completa** — Backend com rastreabilidade ACMG | 🟡 Fase 5 em progresso — Documentação e Portfolio
 
 ---
 
-## 🚀 Como Testar (Reproduzir Meu Aprendizado)
+## 🎯 O que é este projeto?
 
-### Teste em Produção (Nenhuma Instalação)
+Este é um **projeto de aprendizagem em bioinformática clínica** realizado como estágio de formação. O objetivo é construir uma **pipeline de classificação de variantes genéticas** que:
+
+1. **Recebe** um dado genômico (gene, posição, alelos)
+2. **Calcula** evidência ACMG/AMP 2015 (critérios de patogenicidade)
+3. **Retorna** classificação interpretável + score de confiança + rastreabilidade
+
+**Contexto científico:** A Síndrome de Lynch é a predisposição hereditária ao câncer colorretal mais comum, causada por variantes germinativas nos genes MMR (MLH1, MSH2, MSH6, PMS2, EPCAM). Interpretar corretamente essas variantes é crítico para o manejo clínico.
+
+**Scope do projeto:**
+- ✅ FASE 4: Backend FastAPI com ACMG classifier funcional
+- 🟡 FASE 5: README + Portfolio
+- 🔵 FASE 6: Frontend React + Tailwind
+- 🟣 FASE 7: Genes MSH2, MSH6, PMS2 com dados clinicamente relevantes
+- 🟠 FASE 8: Integração com APIs públicas (ClinVar, gnomAD)
+
+---
+
+## 🏗️ Arquitetura (FASE 4)
+
+### Componentes principais
+┌──────────────────────────────────────────────────────────────────┐
+│                        USER / FRONTEND                            │
+│                    (Será React em FASE 6)                         │
+└────────────────────────┬─────────────────────────────────────────┘
+                       │
+     POST /api/classify
+  {gene, chromosome, position, ref, alt}
+│
+┌────────────────────────▼─────────────────────────────────────────┐
+│                      FastAPI Router                               │
+│              src/api/routes/variants.py                           │
+│  • Valida input (Pydantic schema)                                │
+│  • Chama adapter para normalizar dados                           │
+│  • Invoca classifier                                              │
+└────────────────────────┬─────────────────────────────────────────┘
+         │
+classify_with_details()
+(retorna: classe, critérios, score)
+                     │
+┌────────────────────────▼─────────────────────────────────────────┐
+│               ACMGClassifier                                      │
+│         src/variants/acmg_analyzer.py                             │
+│                                                                    │
+│  1. Detecta tipo de mutação (frameshift, deletion, etc)          │
+│  2. Busca frequência do alelo                                    │
+│  3. Calcula scores ACMG:                                         │
+│     • PVS1 (+4): frameshift/stop → muito deletério              │
+│     • PM2 (+1): alelo muito raro (freq < 0.001)                 │
+│     • PP3 (+1): tipo complexo + raro                            │
+│     • BP4 (-1): alelo moderadamente raro (freq 0.001-0.01)     │
+│  4. Soma pontos → classificação final                            │
+└────────────────────────┬─────────────────────────────────────────┘
+│
+        allele_frequency lookup
+      (gnomAD, ClinVar, etc)
+              │
+┌────────────────────────▼─────────────────────────────────────────┐
+│              JSON Response                                         │
+│                                                                    │
+│  {                                                                 │
+│    "pathogenicity_class": "PATHOGENIC",                          │
+│    "acmg_criteria": ["PVS1", "PM2", "PP3"],                     │
+│    "confidence_score": 0.95,                                     │
+│    "reasoning": "frameshift + rare + ......"                    │
+│  }                                                                 │
+└──────────────────────────────────────────────────────────────────┘
+---
+
+## 📊 Métricas ACMG/AMP 2015 (Calibradas para Lynch)
+
+A classificação segue o framework ACMG/AMP 2015, com critérios calibrados para genes MMR conforme **ClinGen InSiGHT Hereditary Colorectal Cancer VCEP**.
+
+### Escala de Pontos
+
+| Critério | Tipo | Pontos | Acionador |
+|----------|------|--------|-----------|
+| **PVS1** | Muito forte | +4 | Frameshift, stop-gain, deletion/inserção sem mudança de fase, indel em splice site conservado |
+| **PM2** | Moderado | +1 | Alelo muito raro em população geral (AF < 0.001 em gnomAD) |
+| **PP3** | Suportivo | +1 | Frequência rara (< 0.001) **E** tipo de mutação complexo (não-substitution) |
+| **BP4** | Suportivo contra | -1 | Alelo em frequência moderada (0.001 ≤ AF < 0.01) — sugere variação benigna |
+
+### Classificação Final
+≥ 6 pontos         → PATHOGENIC (confiança 0.95)
+3–5 pontos       → LIKELY_PATHOGENIC (0.80)
+-2 a 2 pontos    → VUS / Uncertain Significance (0.50)
+≤ -2 pontos      → LIKELY_BENIGN (0.20)
+---
+
+## 🚀 Quick Start
+
+### Pré-requisitos
+
+- Python 3.9+
+- pip ou poetry
+- Git
+
+### Instalação local
 
 ```bash
-curl -X POST https://crispr-mmr-explorer-production.up.railway.app/api/classify \
-  -H "Content-Type: application/json" \
-  -d '{
-    "chromosome": "3",
-    "position": 36993722,
-    "ref": "A",
-    "alt": "G",
-    "gene": "MLH1"
-  }'
+# 1. Clonar repositório
+git clone https://github.com/carla-bioinfo/crispr-mmr-explorer.git
+cd crispr-mmr-explorer
+
+# 2. Criar environment virtual
+python3 -m venv venv
+source venv/bin/activate  # Linux/Mac
+# ou: venv\Scripts\activate  # Windows
+
+# 3. Instalar dependências
+pip install -r requirements.txt
+
+# 4. Rodar testes (validar setup)
+pytest tests/ -v
+
+# 5. Iniciar servidor local
+python -m uvicorn src.api.main:app --reload --port 8000
 ```
 
-**Resposta (Status 200):**
+**Output esperado:**
+INFO:     Uvicorn running on http://127.0.0.1:8000
+INFO:     Application startup complete
+### Usar em produção (Railway)
+Endpoint: https://crispr-mmr-explorer-production.up.railway.app
+Status:   ✅ Live (FASE 4)
+Testes:   50/50 passando
+---
+
+## 📡 API — Exemplos de Uso
+
+### Endpoint: `POST /api/classify`
+
+**URL:**
+http://localhost:8000/api/classify          (local)
+https://crispr-mmr-explorer-production.up.railway.app/api/classify  (produção)
+**Headers:**
+Content-Type: application/json
+**Request body:**
 ```json
 {
-  "status": "success",
-  "data": {
-    "variant_id": "RCV036993722",
-    "gene": "MLH1",
-    "pathogenicity_class": "VUS",
-    "acmg_criteria": ["PVS1", "PM2", "PP3"],
-    "confidence_score": 0.85
-  },
-  "message": "Variante MLH1 classificada como VUS"
+  "gene": "MLH1",
+  "chromosome": "3",
+  "position": 36993722,
+  "ref": "AGT",
+  "alt": "A",
+  "allele_frequency": 0.0
 }
 ```
 
-### Rodar Localmente
+### Exemplo 1: Deletção MLH1 (Esperado → PATHOGENIC)
 
 ```bash
-git clone https://github.com/carla-bioinfo/crispr-mmr-explorer.git
-cd crispr-mmr-explorer
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python3 -m uvicorn src.api.main:app --reload --port 8000
+curl -X POST http://localhost:8000/api/classify \
+  -H "Content-Type: application/json" \
+  -d '{
+    "gene": "MLH1",
+    "chromosome": "3",
+    "position": 36993722,
+    "ref": "AGT",
+    "alt": "A"
+  }'
 ```
 
-Acesse Swagger UI: `http://127.0.0.1:8000/docs`
-
----
-
-## 🧬 O Que Faz (Explicação Técnica)
-
-O projeto classifica variantes genéticas (especialmente em genes MMR: MLH1, MSH2, MSH6, PMS2, EPCAM) usando critérios ACMG/AMP 2015.
-
-**Fluxo Simplificado:**
-[Entrada: Variante genética]
-↓
-[ACMGClassifier avalia critérios]
-├─ PVS1: É um frameshift que para tradução?
-├─ PM2: É frequência alélica rara (<0.001)?
-├─ PP3: Modelos in silico predizem deletério?
-└─ BP4, BM4: Contra-evidências de patogenicidade
-↓
-[Agregação de score]
-↓
-[Saída: PATHOGENIC | LIKELY_PATHOGENIC | VUS | LIKELY_BENIGN | BENIGN]
-**Dados:** Atualmente usando **mock data** (synthetic). FASE 4 integrará ClinVar real.
-
----
-
-## 📚 Stack Técnico (O Que Aprendi a Usar)
-
-| Aspecto | Tecnologia | Por Que? |
-|---------|-----------|---------|
-| **Language** | Python 3.11 | Popular em bioinformática + DS |
-| **Web Framework** | FastAPI | Moderno, async, auto-docs Swagger |
-| **Validation** | Pydantic | Type hints + validação automática |
-| **Container** | Docker | Reprodutibilidade + deployment |
-| **Deploy** | Railway | Simples, free tier, GitHub integration |
-| **Testing** | pytest | Padrão de ouro em Python |
-| **Logging** | structlog | Logs estruturados para auditoria |
-
----
-
-## 🔧 Lições Aprendidas (Debugging Journey)
-
-### Problema 1: `$PORT` não expandia em produção
-
-**Sintoma:**
-Error: Invalid value for '--port': '$PORT' is not a valid integer
-**Root Cause:**
-Railway `startCommand` (exec form) não expande variáveis de ambiente:
-```dockerfile
-# ❌ ERRADO: Exec form (não expande $PORT)
-CMD ["uvicorn", "...", "--port", "$PORT"]
-
-# ✅ CORRETO: Shell form (expande via /bin/sh -c)
-CMD uvicorn ... --port ${PORT:-8000}
+**Resposta esperada:**
+```json
+{
+  "pathogenicity_class": "PATHOGENIC",
+  "acmg_criteria": ["PVS1", "PM2", "PP3"],
+  "confidence_score": 0.95,
+  "reasoning": "Frameshift deletion (PVS1: +4) in lynchpin MLH1 gene, extremely rare (PM2: +1), complex mutation type (PP3: +1). Score: 6 points = PATHOGENIC."
+}
 ```
 
-**Lição:** Exec form vs Shell form não é óbvio. Levei tempo debugando.
+---
 
-### Problema 2: `startCommand` vs `CMD` Conflito
+## 🧪 Testes
 
-**Sintoma:** Dockerfile estava correto, mas Railway ignorava e usava startCommand antigo.
+**Rodar todos os testes:**
+```bash
+pytest tests/ -v
+```
 
-**Solução:** Remover `startCommand` do `railway.json` e deixar Dockerfile ser a "fonte de verdade".
+**Output:**
+tests/test_acmg_analyzer.py ........................ 43 passed
+tests/test_api.py ............................. 7 passed
+================================ 50 passed in 2.34s ===============
 
-**Lição:** Em CI/CD, sempre há camadas de configuração conflitantes. Precisa mapear todas.
-
-### Problema 3: Projeto Corrompido no Cache
-
-**Sintoma:** Mesmo após fix, Railway retornava 404.
-
-**Solução:** Deletar projeto Railway inteiro e reconstruir do zero.
-
-**Lição:** Às vezes refazer é mais rápido que debugar. Decisão estratégica!
+**Rodar com cobertura:**
+```bash
+pytest tests/ --cov=src --cov-report=html
+```
 
 ---
 
-## 📊 Status Atual
+## 🔧 Estrutura do Projeto
+crispr-mmr-explorer/
+├── src/
+│   ├── api/
+│   │   ├── main.py                 # FastAPI app
+│   │   ├── routes/
+│   │   │   └── variants.py         # POST /api/classify
+│   │   ├── schemas.py              # Pydantic models
+│   │   └── adapter.py              # Normaliza campos
+│   ├── variants/
+│   │   ├── acmg_analyzer.py        # ACMGClassifier
+│   │   ├── utils.py                # get_gnomad_frequency()
+│   │   ├── models.py               # Models
+│   │   └── database.py             # Database setup
+│   ├── data/
+│   │   └── real_lynch_variants.json
+│   └── utils/
+│       └── logger.py               # Logging
+├── tests/
+│   ├── test_acmg_analyzer.py       # Unit tests (43)
+│   └── test_api.py                 # API tests (7)
+├── requirements.txt
+├── pytest.ini
+└── README.md
+---
 
-| Fase | Status | Notas |
-|------|--------|-------|
-| **v2.0.2 (Agora)** | ✅ LIVE | API funciona, Dockerfile correto, Railway happy |
-| **FASE 4 (Próximo)** | 🚧 Iniciando | Integrar ClinVar real + gnomAD v4 |
-| **FASE 5** | ⏳ TODO | LinkedIn portfolio + Streamlit UI |
-| **FASE 6** | ⏳ TODO | React frontend (melhor que Streamlit) |
+## 🐛 Gotchas & Learnings (FASE 4)
+
+### 1. Campo "tipo" vs "type" (Bilíngue)
+
+**Problema:** Adaptador retorna "tipo", mas código esperava "type".
+
+**Solução:**
+```python
+mutation_type = (variant.get("type") or variant.get("tipo") or "substitution").lower()
+```
+
+### 2. `allele_frequency = None` quebra comparações
+
+**Problema:** Comparação `None < 0.001` falhava.
+
+**Solução:**
+```python
+allele_freq = variant.get("allele_frequency") or 0.0001
+```
+
+### 3. Versão Starlette incompatível
+
+**Problema:** FastAPI 0.104.1 + Starlette 0.27.0 → TestClient quebrava.
+
+**Solução:** Upgrade para FastAPI 0.128.8 + Starlette 0.49.3
 
 ---
 
-## 🧬 Contexto Bioinformático (O Que Estou Aprendendo)
+## 📚 Referências & Leitura
 
-**Síndrome de Lynch:**
-- Câncer colorretal hereditário (~5% de todos CCR)
-- Causada por variantes germinativas em genes MMR
-- Risco de vida de CCR: até 70% (vs ~5% pop geral)
+### ACMG/AMP 2015 Framework
+- [Richards et al. (2015), Genet Med](https://pubmed.ncbi.nlm.nih.gov/25741868/)
 
-**Genes MMR Focados:**
-- **MLH1** (~70% variantes Lynch) ← Mais estudado
-- **MSH2** (~20%)
-- **MSH6** (~7%)
-- **PMS2** (~3%)
-- **EPCAM** (~1%)
+### Lynch Syndrome & MMR Genes
+- [ClinGen InSiGHT VCEP](https://clinicalgenome.org/clingen-projects/hereditary-cancers/)
+- [InSiGHT Database](https://www.insightdatabase.org/)
 
-**ACMG/AMP 2015:**
-- Guia padrão para classificação de variantes
-- Baseada em agregação de evidências (critérios PVS1, PM1, etc)
-- Produz 5 categorias finais (PATHOGENIC → BENIGN)
+### Ferramentas
+- [ClinVar](https://www.ncbi.nlm.nih.gov/clinvar/)
+- [gnomAD](https://gnomad.broadinstitute.org/)
 
 ---
 
-## 🔐 Segurança (Aprendizagem em Progresso)
+## 🤝 Contribuir
 
-✅ **Implementado:**
-- Pydantic validation (não aceita lixo)
-- Sem credenciais em código (env vars)
-- Logs estruturados (auditoria)
-
-⚠️ **Precisa Melhorar:**
-- Rate limiting (FASE 5)
-- CORS (se frontend será externo)
-- Input sanitization mais rigorosa
+Reportar bugs em [Issues](https://github.com/carla-bioinfo/crispr-mmr-explorer/issues).
+Sugerir melhorias em [Discussions](https://github.com/carla-bioinfo/crispr-mmr-explorer/discussions).
 
 ---
 
-## 🎓 Como Reproduzir Este Projeto
+## 📖 Roadmap
+FASE 1-3: ✅ Infraestrutura
+FASE 4:   ✅ Backend ACMG classifier
+FASE 5:   🟡 Documentação + Portfolio
+FASE 6:   🔵 Frontend React
+FASE 7:   🟣 Genes MSH2, MSH6, PMS2
+FASE 8:   🟠 APIs reais
+---
 
-Se você está aprendendo também, pode:
+## 📝 Licença
 
-1. **Clonar o repo**
-2. **Debugar localmente** (quebra, arruma, aprende)
-3. **Estudar Dockerfile** (shell form vs exec)
-4. **Entender ACMG** (genomics + code)
-5. **Deploy no Railway** (CI/CD prático)
-
-Cada etapa tem challenge. Isso é aprendizagem real!
+MIT License
 
 ---
 
-## 📖 Referências que Consulto
+## 👤 Autor
 
-- ACMG/AMP 2015 Standards (interpretação de variantes)
-- ClinGen InSiGHT (critérios gene-específicos MMR)
-- FastAPI Docs (web development)
-- Python Best Practices (Clean Code)
-
-*(Nenhuma dessas foi inventada — são reais e consultáveis)*
+**Carla** — Estudante de Biomedicina + Ciência de Dados
+📧 carlabio.biomol@gmail.com
+🔗 [GitHub](https://github.com/carla-bioinfo) | [LinkedIn](https://linkedin.com/in/carla-bioinfo/)
 
 ---
 
-## 🤝 Próximas Etapas de Aprendizagem
-
-1. **FASE 4:** Integrar APIs reais (ClinVar, gnomAD)
-2. **Aprender:** REST API design patterns
-3. **Aprender:** Data fetching + caching
-4. **Aprender:** Versionamento de modelos
-
----
-
-## 📝 Notas Pessoais (Estudante)
-
-Este projeto consolidou:
-- ✅ FastAPI + Pydantic (gosto!)
-- ✅ Docker fundamentals
-- ✅ CI/CD troubleshooting (resilience!)
-- ✅ Bioinformática aplicada
-- ✅ Debugging metodológico
-
-Próximo desafio: Integrar dados reais sem degradar performance.
-
----
-
-**Última atualização:** 5 de Julho, 2026  
-**Desenvolvido por:** Carla (Estudante de Biomedicina + Data Science)  
-**Status:** Learning & Building 🚀
+**Última atualização:** 11 de Julho de 2026 | FASE 4 ✅
