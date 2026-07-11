@@ -1,0 +1,28 @@
+{
+  "variants": [
+    {
+      "rcv": "RCV000004849",
+      "gene": "MLH1",
+      "hgvs": "MLH1:c.1528_1529delAA",
+      "pathogenicity": "Pathogenic",
+      "condition": "Lynch Syndrome",
+      "allele_frequency": 0.00001
+    },
+    {
+      "rcv": "RCV000004916",
+      "gene": "MSH2",
+      "hgvs": "MSH2:c.942+1G>A",
+      "pathogenicity": "Pathogenic",
+      "condition": "Lynch Syndrome",
+      "allele_frequency": 0.00002
+    },
+    {
+      "rcv": "RCV000012345",
+      "gene": "MSH6",
+      "hgvs": "MSH6:c.3226_3227insA",
+      "pathogenicity": "Pathogenic",
+      "condition": "Lynch Syndrome",
+      "allele_frequency": 0.000008
+    }
+  ]
+}

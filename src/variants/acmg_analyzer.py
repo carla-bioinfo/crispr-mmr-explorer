@@ -119,12 +119,12 @@ class ACMGClassifier:
         criteria = []
         points = 0
         
-        mutation_type = variant.get("type", "substitution").lower()
+        mutation_type = (variant.get("type") or variant.get("tipo") or "substitution").lower()
         if mutation_type in ["deletion", "insertion", "frameshift"]:
             criteria.append("PVS1")
             points += 4
         
-        allele_freq = variant.get("allele_frequency", 0.01)
+        allele_freq = variant.get("allele_frequency") or 0.01
         if allele_freq < 0.001:
             criteria.append("PM2")
             points += 1
