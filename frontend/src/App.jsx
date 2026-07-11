@@ -1,122 +1,80 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useState } from 'react';
+import VariantForm from './VariantForm';
+import ResultDisplay from './ResultDisplay';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [result, setResult] = useState(null);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-blue-500/20">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="text-3xl">🧬</div>
+            <div>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                CRISPR-MMR Explorer
+              </h1>
+              <p className="text-sm text-blue-300/70">Classificação ACMG de variantes Mismatch Repair</p>
+            </div>
+          </div>
+          <div className="hidden md:flex gap-2">
+            <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-xs font-semibold">
+              v2.0.2
+            </span>
+            <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-xs font-semibold">
+              Backend: ✓
+            </span>
+          </div>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-1">
+            <div className="sticky top-24">
+              <div className="bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl border border-blue-500/20 shadow-2xl overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-4">
+                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                    <span>📋</span> Dados da Variante
+                  </h2>
+                </div>
+                <div className="p-6">
+                  <VariantForm onResultReceived={setResult} />
+                </div>
+              </div>
+            </div>
+          </div>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+          <div className="lg:col-span-2">
+            {result ? (
+              <div className="bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl border border-blue-500/20 shadow-2xl overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-4">
+                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                    <span>📊</span> Resultado da Classificação
+                  </h2>
+                </div>
+                <div className="p-8">
+                  <ResultDisplay result={result} />
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-96 bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl border border-blue-500/20 border-dashed">
+                <div className="text-6xl mb-4">🔬</div>
+                <p className="text-xl text-slate-300 font-semibold">Aguardando análise</p>
+                <p className="text-sm text-slate-400 mt-2">Preencha os dados e clique em "Classificar"</p>
+              </div>
+            )}
+          </div>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </main>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <footer className="border-t border-blue-500/20 mt-16 py-8 bg-slate-900/50">
+        <div className="max-w-7xl mx-auto px-6 text-center text-slate-400 text-sm">
+          <p>CRISPR-MMR Explorer v2.0.2 • Classificação baseada em ACMG/AMP 2015 • ClinGen InSiGHT VCEP</p>
+        </div>
+      </footer>
+    </div>
+  );
 }
-
-export default App
