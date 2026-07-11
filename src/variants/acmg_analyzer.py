@@ -117,7 +117,6 @@ class ACMGClassifier:
     def classify_with_details(self, variant: dict) -> tuple:
         """ACMG/AMP 2015 com rastreabilidade: (class, criteria, confidence)."""
         criteria = []
-        import sys; print(f"DEBUG: allele_freq check: {variant}", file=sys.stderr)
         points = 0
         
         mutation_type = (variant.get("type") or variant.get("tipo") or "substitution").lower()
