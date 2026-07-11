@@ -125,7 +125,7 @@ class ACMGClassifier:
             criteria.append("PVS1")
             points += 4
         
-        allele_freq = variant.get("allele_frequency") or 0.01
+        allele_freq = variant.get("allele_frequency") or 0.0001
         if allele_freq < 0.001:
             criteria.append("PM2")
             points += 1
