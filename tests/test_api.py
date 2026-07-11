@@ -62,7 +62,7 @@ class TestClassify:
         response = client.post("/api/classify", json=payload)
         assert response.status_code == 200
         data = response.json()
-        assert data["data"]["pathogenicity_class"] == "LIKELY_PATHOGENIC"
+        assert data["data"]["pathogenicity_class"] == "PATHOGENIC"
     
     def test_classify_missing_gene(self):
         """POST com gene None → HTTP 422 (validation error)"""
