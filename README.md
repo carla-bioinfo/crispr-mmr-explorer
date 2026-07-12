@@ -84,7 +84,7 @@ crispr-mmr-explorer/
 
 **Carla Rodrigues** (@carla-bioinfo)
 
-Especialista em Bioinformática | Lynch Syndrome & MMR Genes | Building in Public
+Estudante Ciência de Dados e Bioinformática | Lynch Syndrome & MMR Genes | Building in Public
 
 ---
 
